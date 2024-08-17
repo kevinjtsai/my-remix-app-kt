@@ -1,57 +1,22 @@
-app = "my-remix-app-kt"
-primary_region = "ewr"
-kill_signal = "SIGINT"
-kill_timeout = 5
-processes = [ ]
-swap_size_mb = 512
+# fly.toml app configuration file generated for my-remix-app-wispy-sea-4995 on 2024-08-05T10:39:23-04:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-[experimental]
-allowed_public_ports = [ ]
-auto_rollback = true
+app = 'my-remix-app-wispy-sea-4995'
+primary_region = 'ewr'
 
-[mounts]
-source = "data"
-destination = "/data"
+[build]
 
-[[services]]
-internal_port = 8080
-processes = [ "app" ]
-protocol = "tcp"
-script_checks = [ ]
-
-  [services.concurrency]
-  hard_limit = 100
-  soft_limit = 80
-  type = "requests"
-
-  [[services.ports]]
-  handlers = [ "http" ]
-  port = 80
+[http_service]
+  internal_port = 3000
   force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
 
-  [[services.ports]]
-  handlers = [ "tls", "http" ]
-  port = 443
-
-  [[services.tcp_checks]]
-  grace_period = "1s"
-  interval = "15s"
-  restart_limit = 0
-  timeout = "2s"
-
-  [[services.http_checks]]
-  interval = "10s"
-  grace_period = "5s"
-  method = "get"
-  path = "/resources/healthcheck"
-  protocol = "http"
-  timeout = "2s"
-  tls_skip_verify = false
-  headers = { }
-
-  [[services.http_checks]]
-    grace_period = "10s"
-    interval = "30s"
-    method = "GET"
-    timeout = "5s"
-    path = "/litefs/health"
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
