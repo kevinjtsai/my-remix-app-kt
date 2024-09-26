@@ -25,6 +25,10 @@ model User {
   roles       Role[]
   sessions    Session[]
   connections Connection[]
+
+  institution Institution[]
+  account     Account[]
+  transaction Transaction[]
 }
 
 model Note {
@@ -166,4 +170,55 @@ model Connection {
   userId String
 
   @@unique([providerName, providerId])
+}
+
+model Institution {
+  id           String @id @default(cuid())
+  name         String
+  access_token String
+  cursor       String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+
+  Account Account[]
+}
+
+model Account {
+  id String @id @default(cuid())
+
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  institutionId String
+
+  mask             String
+  name             String
+  officialName     String
+  type             String
+  subtype          String
+  availableBalance Decimal
+  currentBalance   Decimal
+  isoCurrencyCode  String
+  unofficialCurrencyCode String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+
+  Transaction Transaction[]
+}
+
+model Transaction {
+  id String @id @default(cuid())
+
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  accountId String
+
+  amount   Decimal
+  isoCurrencyCode String?
+  category String?
+  date     DateTime?
+  name     String?
+  merchantName String?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
 }
